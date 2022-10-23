@@ -1,0 +1,40 @@
+sudo: false
+language: python
+cache: pip
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        python: ["2.7", "3.7", "3.8", "3.9", "3.10"]
+
+
+#install: pip install -U pip tox coveralls setuptools
+#script: tox -vv
+#after_success:
+  #- coveralls
+
+      steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Install dependencies (tox, coveralls, etc)
+        run: pip install coveralls setuptools tox
+      # You can test your matrix by printing the current Python version
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+      - name: Run tox
+        run: tox -vv -e py
+      #- name: Run setup.py
+      #  run: python setup.py install
+      #- name: Run tests
+      #  run: |
+      #    coverage run -m py.test -v -r w
+      #    coverage report
+      #- name: The job has succeeded
+      #  if: ${{ success() }}
+      #- name: Do coveralls
+      #  run: coveralls
